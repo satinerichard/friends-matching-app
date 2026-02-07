@@ -12,6 +12,14 @@ body {
     color: #333;
 }
 
+.subtitle {
+    font-size: 14px;
+    font-weight: 300;
+    color: #636e72;
+    margin-top: -5px;
+    margin-bottom: 20px;
+}
+
 h2 {
     color: #2d3436;
     font-weight: 600;
