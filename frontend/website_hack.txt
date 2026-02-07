@@ -1,0 +1,23 @@
+<!DOCTYPE html>
+<html>
+    <head>
+        <style>
+            body {
+                background-color:white;
+            }
+            h1 {
+                color:black;
+                text-align: center;
+            }
+            p {
+                font-family:"Times New Roman", 'Times New Roman', Times, serif;
+                font-size: 40px;
+            }
+        </style>
+    </head>
+    <body>
+        <h2>
+            <center> Welcome to FriendsR</center>
+        </h2>
+    </body>
+</html>
