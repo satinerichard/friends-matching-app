@@ -1,4 +1,6 @@
 from flask_sqlalchemy import SQLAlchemy
+from datetime import datetime
+
 db = SQLAlchemy()
 
 class User(db.Model):
@@ -10,6 +12,8 @@ class User(db.Model):
   bio = db.Column(db.String(300))
   birth_place = db.Column(db.String(300))
   interests = db.Column(db.String(500))
+
+
   
 
 def add_or_update_user(user_id=None, username=None, real_name=None, age=None, email=None, bio=None, birth_place=None, interests=None):
@@ -43,3 +47,19 @@ def add_or_update_user(user_id=None, username=None, real_name=None, age=None, em
 
     db.session.commit()
     return user, message
+
+
+class Swipe(db.Model):
+    id = db.Column(db.Integer, primary_key=True)
+    swiper_id = db.Column(db.Integer, db.ForeignKey("user.id"), nullable=False)
+    swiped_id = db.Column(db.Integer, db.ForeignKey("user.id"), nullable=False)
+    direction = db.Column(db.String(10), nullable=False) #right or left
+    timestamp = db.Column(db.DateTime, default = datetime.utcnow)
+
+
+
+class Match(db.Model):
+    id = db.Column(db.Integer, primary_key=True)
+    user1_id = db.Column(db.Integer, db.ForeignKey("user.id"), nullable=False)
+    user2_id = db.Column(db.Integer, db.ForeignKey("user.id"), nullable=False)
+    timestamp = db.Column(db.DateTime, default=datetime.utcnow)

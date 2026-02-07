@@ -54,3 +54,52 @@ def add_or_update_user_route():
             "interests": user.interests
         }
     })
+
+
+
+@app.route("/users", methods=["POST"])
+def swipe_route():
+    data = request.json
+
+    user_id = data.get("id")
+    swiper_id = data.get("swiper_id")
+    swiped_id = data.get("swiped_id")
+    direction = data.get("direction")
+    timestamp = data.get("timestamp")
+
+    if not swiper_id or not swiped_id or direction not in ["right", "left"]:
+        return jsonify({"message": "Invalid input"}), 400
+
+    # Prevents a user to swipt itself
+    if swiper_id == swiped_id:
+        return jsonify({"message": "Cannot swipe on yourself"}), 400
+
+    existing_swipe = Swipe.query.filter_by(swiper_id=swiper_id, swiped_id=swiped_id).first()
+    if existing_swipe:
+        existing_swipe.direction = direction
+        existing_swipe.timestamp = timestamp
+        db.session.commit()
+        message = "Swipe updated"
+    else:
+        swipe = Swipe(swiper_id=swiper_id, swiped_id=swiped_id, direction=direction)
+        db.sessions.add(swipe)
+        db.session.commit()
+        message = "Swipe recorded"
+
+    # check for mutual right swipe to create a match
+    if direction = "right":
+        mutual_swipe = Swipe.query.filter_by(swiper_id=swiper_id, swiped_id=swiped_id, direction="right").first()
+        if mutual_swipe:
+            # check if match already exists
+            existing_match = Match.query.filter(((Match.user1_id==swiper_id) & (Match.user2_id==swiped_id)) |
+                ((Match.user1_id==swiped_id) & (Match.user2_id==swiper_id))
+            ).first()
+            if not existing_match:
+                match = Match(user1_id==swiper_id, user2_id==swiped_id)
+                db.session.add(match)
+                db.session.commit()
+                return jsonify({"message" : "It's a match!", "match":{"user1_id" : swiper_id, "user2_id": swiped_id}})
+
+    return jsonify({"message": message})
+
+
