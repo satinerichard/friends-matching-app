@@ -6,40 +6,40 @@ class User(db.Model):
   username = db.Column(db.String(100), unique=True) # each user needs a UNIQUE username
   real_name = db.Column(db.String(100)) # legal name
   email = db.Column(db.String(100), unique=True)
-  age = db.COlumn(db.Integer)
+  age = db.Column(db.Integer)
   bio = db.Column(db.String(300))
   birth_place = db.Column(db.String(300))
   interests = db.Column(db.String(500))
   
 
-def add_or_update_user (user_id=None, username=None, real_name=None, age=None , email=None, bio=None, birth_place=None, interests=None ):
+def add_or_update_user(user_id=None, username=None, real_name=None, age=None, email=None, bio=None, birth_place=None, interests=None):
 
-  if user_id:
-    user = User.query.filter_by(id=user_id).first()
-    if not user:
-      return None # user not found
-    message = "User updated"
-  else:
-    # create new user with given info
-    user = User()
-    db.session.add(user)
-    message = "User created"# add the new user to database
+    if user_id:
+        user = User.query.filter_by(id=user_id).first()
+        if not user:
+            return None, "User not found"
+        message = "User updated"
+    else:
+        # create new user with given info
+        user = User()
+        db.session.add(user)
+        message = "User created"
 
-if username is not None:
-  user.username = username
-if real_name is not None:
-  user.real_name = real_name
-if age is not None:
-  user.age = age
-if email is not None:
-  user.email = email
-if bio is not None:
-  user.bio = bio
-if birth_place is not None:
-  user.birth_place = birth_place
-if interets is not None:
-  user.interests = interests
+    # Update only provided fields
+    if username is not None:
+        user.username = username
+    if real_name is not None:
+        user.real_name = real_name
+    if age is not None:
+        user.age = age
+    if email is not None:
+        user.email = email
+    if bio is not None:
+        user.bio = bio
+    if birth_place is not None:
+        user.birth_place = birth_place
+    if interests is not None:
+        user.interests = interests
 
-db.session.commit()
-return user, message
-
+    db.session.commit()
+    return user, message
