@@ -55,6 +55,29 @@ def add_or_update_user_route():
         }
     })
 
+@app.route("/people", methods=["GET"])
+def get_people():
+    my_username = request.args.get("my_name")
+
+    if not my_username:
+        return jsonify({"message": "Missing my_name"}), 400
+
+    users = User.query.filter(User.username != my_username).all()
+
+    return jsonify({
+        "people": [
+            {
+                "id": u.id,
+                "username": u.username,
+                "real_name": u.real_name,
+                "age": u.age,
+                "birth_place": u.birth_place,
+                "interests": u.interests.split(",") if u.interests else []
+            }
+            for u in users
+        ]
+    })
+
 
 
 @app.route("/swipes", methods=["POST"])
@@ -108,6 +131,37 @@ def swipe_route():
                 return jsonify({"message" : "It's a match!", "match":{"user1_id" : swiper_id, "user2_id": swiped_id}})
 
     return jsonify({"message": message})
+
+
+
+@app.route("/matches", methods=["GET"])
+def get_matches():
+    username = request.args.get("my_name")
+
+    if not username:
+        return jsonify({"message": "Missing my_name"}), 400
+
+    user = User.query.filter_by(username=username).first()
+    if not user:
+        return jsonify({"message": "User not found"}), 404
+
+    matches = Match.query.filter(
+        (Match.user1_id == user.id) |
+        (Match.user2_id == user.id)
+    ).all()
+
+    result = []
+    for m in matches:
+        other_id = m.user2_id if m.user1_id == user.id else m.user1_id
+        other_user = User.query.get(other_id)
+        result.append({
+            "id": other_user.id,
+            "username": other_user.username,
+            "real_name": other_user.real_name
+        })
+
+    return jsonify({"matches": result})
+
 
 
 if __name__ == "__main__":
