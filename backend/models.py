@@ -5,9 +5,9 @@ db = SQLAlchemy()
 
 class User(db.Model):
   id = db.Column(db.Integer, primary_key=True) # creates a unique identifier for each user
-  username = db.Column(db.String(100), unique=True) # each user needs a UNIQUE username
-  real_name = db.Column(db.String(100)) # legal name
-  email = db.Column(db.String(100), unique=True)
+  username = db.Column(db.String(100), unique=True, nullable=False) # each user needs a UNIQUE username
+  real_name = db.Column(db.String(100), nullable=False) # legal name
+  email = db.Column(db.String(100), unique=True, nullable=False)
   age = db.Column(db.Integer)
   bio = db.Column(db.String(300))
   birth_place = db.Column(db.String(300))
