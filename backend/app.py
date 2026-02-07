@@ -47,10 +47,10 @@ if not user:
         "message": message,
         "user": {
             "id": user.id,
-            "name": user.name,
+            "username": user.name,
             "real_name": user.real_name,
-            "email": user.email,
             "age": user.age,
+            "email": user.email,
             "bio": user.bio,
             "place_birth": user.place_birth,
             "interests": user.interests
