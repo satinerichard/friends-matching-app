@@ -1,8 +1,11 @@
 # this creates a file friendR.db in my backend folder to store all users
-from flask import Flask, request, jsonify
-from models import *
+from flask import Flask, request, jsonify, render_template, redirect, url_for
+from models import *    
 
-app = Flask(__name__)
+app = Flask(__name__, 
+    template_folder="../frontend",   # HTML files
+    static_folder="../frontend"      # CSS and JS
+    )
 
 # Connect database
 app.config['SQLALCHEMY_DATABASE_URI'] = 'sqlite:///friendR.db'
@@ -12,6 +15,59 @@ db.init_app(app)
 # Create tables (only runs once)
 with app.app_context():
     db.create_all()
+
+
+# --- Serve pages ---
+@app.route("/")
+def home():
+    return render_template("website_hack.html")
+
+@app.route("/login")
+def login_page():
+    return render_template("login.html")
+
+@app.route("/signup")
+def signup_page():
+    return render_template("signup.html")
+
+@app.route("/connect")
+def connect_page():
+    return render_template("connecting.html")
+
+@app.route("/signup", methods=["POST"])
+def signup():
+    data = request.form
+    username = data.get("username")
+    email = data.get("email")
+    password = data.get("password")
+    real_name = data.get("fullname")
+
+    # create user
+    user, message = add_or_update_user(
+        username=username,
+        email=email,
+        real_name=real_name
+        # you can hash password later
+    )
+
+    if not user:
+        return render_template("signup.html", error=message)
+
+    return redirect(url_for("login_page"))
+
+@app.route("/login", methods=["POST"])
+def login():
+    data = request.form
+    username = data.get("username")
+    # check if username exists
+    user = User.query.filter_by(username=username).first()
+    if not user:
+        return render_template("login.html", error="User not found")
+    
+    # store user id in session for later (optional)
+    return redirect(url_for("connect_page"))
+
+
 
 
 @app.route("/users", methods=["POST"])
