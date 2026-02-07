@@ -1,3 +1,4 @@
+const response = await fetch("/people?my_name=YOUR_USERNAME");
 const card = document.getElementById('active-card');
 const connectBtn = document.getElementById('connect-btn');
 const skipBtn = document.getElementById('skip-btn');
