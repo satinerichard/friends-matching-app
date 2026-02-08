@@ -22,50 +22,47 @@ with app.app_context():
 def home():
     return render_template("website_hack.html")
 
-@app.route("/login")
+@app.route("/login", methods=["GET", "POST"])
 def login_page():
+    if request.method == "POST":
+        username = request.form.get("username")
+        password = request.form.get("password")  # For now, we won't check password
+
+        user = User.query.filter_by(username=username).first()
+        if not user:
+            return render_template("login.html", error="User not found")
+
+        # Optionally, store user info in session here
+        return redirect(url_for("connect_page"))
+
     return render_template("login.html")
 
-@app.route("/signup")
+
+@app.route("/signup", methods=["GET", "POST"])
 def signup_page():
+    if request.method == "POST":
+        fullname = request.form.get("fullname")
+        username = request.form.get("username")
+        email = request.form.get("email")
+        password = request.form.get("password")  # For now, store but don't check
+
+        user, message = add_or_update_user(
+            username=username,
+            email=email,
+            real_name=fullname
+        )
+
+        if not user:
+            return render_template("signup.html", error=message)
+
+        return redirect(url_for("login_page"))
+
     return render_template("signup.html")
+
 
 @app.route("/connect")
 def connect_page():
     return render_template("connecting.html")
-
-@app.route("/signup", methods=["POST"])
-def signup():
-    data = request.form
-    username = data.get("username")
-    email = data.get("email")
-    password = data.get("password")
-    real_name = data.get("fullname")
-
-    # create user
-    user, message = add_or_update_user(
-        username=username,
-        email=email,
-        real_name=real_name
-        # you can hash password later
-    )
-
-    if not user:
-        return render_template("signup.html", error=message)
-
-    return redirect(url_for("login_page"))
-
-@app.route("/login", methods=["POST"])
-def login():
-    data = request.form
-    username = data.get("username")
-    # check if username exists
-    user = User.query.filter_by(username=username).first()
-    if not user:
-        return render_template("login.html", error="User not found")
-    
-    # store user id in session for later (optional)
-    return redirect(url_for("connect_page"))
 
 
 
