@@ -2,10 +2,12 @@
 from flask import Flask, request, jsonify, render_template, redirect, url_for
 from models import *    
 
-app = Flask(__name__, 
-    template_folder="../frontend",   # HTML files
-    static_folder="../frontend"      # CSS and JS
-    )
+app = Flask(
+    __name__,
+    template_folder="../frontend",
+    static_folder="../frontend/static"
+)
+
 
 # Connect database
 app.config['SQLALCHEMY_DATABASE_URI'] = 'sqlite:///friendR.db'
